@@ -1,0 +1,35 @@
+# Virtual Environment
+.venv/
+venv/
+
+# Environment Variables
+.env
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# VS Code
+.vscode/
+
+# Logs
+logs/
+*.log
+
+# ChromaDB
+data/chroma_db/
+
+# Memory Files
+data/episodic_memory.jsonl
+data/long_term_memory.json
+
+# Streamlit Cache
+.streamlit/secrets.toml
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/

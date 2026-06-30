@@ -1,0 +1,13 @@
+streamlit
+langchain
+langchain-google-genai
+google-generativeai
+python-dotenv
+pydantic
+pydantic-settings
+yfinance
+tavily-python
+requests
+beautifulsoup4
+chromadb
+plotly
