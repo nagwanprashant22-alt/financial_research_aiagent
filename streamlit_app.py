@@ -371,22 +371,41 @@ for col, ex in zip(example_cols, examples):
 
 
 if run and query.strip():
-    with st.status("Agent running...", expanded=True) as status:
-        st.write("📋 Planning research...")
-        st.write("🧰 Calling financial tools...")
-        st.write("🔬 Synthesizing evidence...")
+    try:
+        with st.status("Agent running...", expanded=True) as status:
+            st.write("📋 Planning research...")
+            st.write("🧰 Calling financial tools...")
+            st.write("🔬 Synthesizing evidence...")
 
-        result = agent.run(query)
+            result = agent.run(query)
 
-        st.write("✅ Report ready.")
-        status.update(
-            label="Research complete",
-            state="complete",
-            expanded=False,
-        )
+            st.write("✅ Report ready.")
+            status.update(
+                label="Research complete",
+                state="complete",
+                expanded=False,
+            )
 
-    st.session_state.result = result
-    st.session_state.history.append(result)
+        st.session_state.result = result
+        st.session_state.history.append(result)
+
+    except Exception as e:
+        error_text = str(e)
+
+        if "RESOURCE_EXHAUSTED" in error_text or "quota" in error_text.lower():
+            st.error(
+                "🚫 Gemini API daily quota is exhausted. Please try again later or use another API key."
+            )
+
+        elif "UNAUTHENTICATED" in error_text or "invalid authentication" in error_text.lower():
+            st.error(
+                "🔐 Invalid Gemini API key. Please check your Hugging Face secret: GEMINI_API_KEY."
+            )
+
+        else:
+            st.error(
+                "⚠️ Something went wrong while generating the report. Please try again."
+            )
 
 
 result = st.session_state.result
