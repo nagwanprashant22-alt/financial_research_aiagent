@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 
 import streamlit as st
 import yfinance as yf
@@ -45,15 +44,19 @@ def get_agent():
 def fmt_money(value):
     if value is None:
         return "N/A"
+
     try:
         value = float(value)
+
         if value >= 1e12:
             return f"${value / 1e12:.2f}T"
         if value >= 1e9:
             return f"${value / 1e9:.2f}B"
         if value >= 1e6:
             return f"${value / 1e6:.2f}M"
+
         return f"${value:,.2f}"
+
     except Exception:
         return "N/A"
 
@@ -74,12 +77,6 @@ def infer_recommendation(report: str):
 
 
 def get_tool_data(result, tool_name):
-    """
-    Safely extract tool data.
-    Always returns a dictionary.
-    Never returns None.
-    """
-
     try:
         tool_results = result.get("tool_results", {})
 
@@ -507,7 +504,7 @@ else:
             "📄 Full Report",
             "📰 News",
             "📈 Chart",
-            "🧠 Advanced Analysis",
+            "🧠 Technical Details",
         ]
     )
 
@@ -529,6 +526,7 @@ else:
             st.markdown("### Calculated Insights")
 
             profit_margin = calc_data.get("profit_margin_percent")
+
             if profit_margin is None:
                 st.write("**Profit Margin:** N/A")
             else:
@@ -592,35 +590,78 @@ else:
         render_price_chart(ticker)
 
     with tab_advanced:
-        adv1, adv2 = st.tabs(["Agent Reasoning", "Raw Evidence"])
+        st.info(
+            "This section is intended for technical evaluation and debugging. "
+            "Normal users can focus on Overview, Full Report, News, and Chart."
+        )
+
+        adv1, adv2 = st.tabs(
+            [
+                "🧠 Agent Reasoning",
+                "📂 Raw Evidence",
+            ]
+        )
 
         with adv1:
-            st.markdown("### Research Plan")
-            st.code(json.dumps(result.get("plan", {}), indent=2), language="json")
+            st.markdown("## 🧠 Research Plan")
 
-            st.markdown("### ReAct Trace")
-            for i, step in enumerate(result.get("react_steps", []), start=1):
-                with st.expander(f"{i}. {step.get('action', '')}"):
+            st.code(
+                json.dumps(
+                    result.get("plan", {}),
+                    indent=2,
+                ),
+                language="json",
+            )
+
+            st.markdown("## 🔁 ReAct Trace")
+
+            for i, step in enumerate(
+                result.get("react_steps", []),
+                start=1,
+            ):
+                with st.expander(
+                    f"Step {i}: {step.get('action', '')}",
+                    expanded=False,
+                ):
                     st.code(
-                        json.dumps(step, indent=2, default=str),
+                        json.dumps(
+                            step,
+                            indent=2,
+                            default=str,
+                        ),
                         language="json",
                     )
 
-            st.markdown("### Synthesis")
+            st.markdown("## 🔬 Evidence Synthesis")
+
             st.code(
-                json.dumps(result.get("synthesis", {}), indent=2, default=str),
+                json.dumps(
+                    result.get("synthesis", {}),
+                    indent=2,
+                    default=str,
+                ),
                 language="json",
             )
 
         with adv2:
-            st.markdown("### Tool Results")
+            st.markdown("## 📂 Tool Results")
+
             st.code(
-                json.dumps(tool_results, indent=2, default=str),
+                json.dumps(
+                    tool_results,
+                    indent=2,
+                    default=str,
+                ),
                 language="json",
             )
 
-            st.markdown("### Evaluation")
+            st.markdown("## 📊 Evaluation")
+
             st.code(
-                json.dumps(evaluation, indent=2, default=str),
+                json.dumps(
+                    evaluation,
+                    indent=2,
+                    default=str,
+                ),
                 language="json",
             )
